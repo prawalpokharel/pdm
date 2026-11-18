@@ -82,6 +82,9 @@ class Marker:
         python_marker = self.inner.only(*PYTHON_MARKERS)
         if python_marker.is_any():
             return self, PySpecSet()
+        if python_marker.is_empty():
+            # The marker can never be satisfied, e.g. `python_version < "3.8" and python_version >= "3.9"`
+            return self, PySpecSet("<empty>")
         new_marker = exclude_multi(self, *PYTHON_MARKERS)
         return new_marker, _build_pyspec_from_marker(python_marker)
 

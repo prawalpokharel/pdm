@@ -29,6 +29,10 @@ from pdm.models.specifiers import PySpecSet
             'python_version > "3.7" or os_name == "nt"',
             "",
         ),
+        # markers that can never be satisfied
+        ("python_version < '3.8' and python_version >= '3.9'", "<empty>", "<empty>"),
+        ("python_version < '3.8' and python_full_version >= '3.8.0'", "<empty>", "<empty>"),
+        ("os_name == 'nt' and os_name == 'posix'", "<empty>", "<empty>"),
     ],
 )
 def test_split_pyspec(original, marker, py_spec):
@@ -48,6 +52,8 @@ def test_split_pyspec(original, marker, py_spec):
         ("python_version < '3.7' and os_name == 'nt'", EnvSpec.from_spec(">=3.10"), False),
         ("python_version <= '3.10'", EnvSpec.from_spec("==3.10.4"), True),
         ("python_version < '3.7' or os_name == 'nt'", EnvSpec.from_spec(">=3.10"), False),
+        ("python_version < '3.8' and python_version >= '3.9'", EnvSpec.from_spec(">=3.10"), False),
+        ("os_name == 'nt' and os_name == 'posix'", EnvSpec.from_spec(">=3.10", "windows"), False),
         ("python_version >= '3.7' and os_name == 'nt'", EnvSpec.from_spec(">=3.10", "linux"), False),
         ("python_version >= '3.7' or os_name == 'nt'", EnvSpec.from_spec(">=3.10", "linux"), True),
         ("python_version >= '3.7' and implementation_name == 'pypy'", EnvSpec.from_spec(">=3.10"), True),

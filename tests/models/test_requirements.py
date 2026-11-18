@@ -166,6 +166,22 @@ def test_not_supported_editable_requirement(line):
         parse_requirement(line, True)
 
 
+@pytest.mark.parametrize(
+    "marker",
+    [
+        "python_version < '3.8' and python_version >= '3.9'",
+        "os_name == 'nt' and os_name == 'posix'",
+        "python_version < '3.8' and python_version >= '3.9' and extra == 'a'",
+    ],
+)
+def test_requirement_with_unsatisfiable_marker(marker):
+    req = parse_requirement(f"foo; {marker}")
+    assert req.marker.is_empty()
+    assert req.requires_python.is_empty()
+    assert filter_requirements_to_lines([f"foo; {marker}", "bar"], ()) == ["bar"]
+    assert filter_requirements_to_lines([f"foo; {marker}", "bar"], ("a",), include_default=True) == ["bar"]
+
+
 def test_filter_requirements_with_extras():
     requirements = [
         "foo; extra == 'a'",

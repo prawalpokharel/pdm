@@ -243,6 +243,18 @@ def test_exclude_incompatible_requirements(resolve, repository):
     assert "bar" not in result
 
 
+@pytest.mark.parametrize(
+    "marker",
+    ["python_version < '3.8' and python_version >= '3.9'", "os_name == 'nt' and os_name == 'posix'"],
+)
+def test_exclude_requirements_with_unsatisfiable_marker(resolve, repository, marker):
+    repository.add_candidate("foo", "0.1.0")
+    repository.add_dependencies("foo", "0.1.0", [f"bar; {marker}"])
+    result = resolve(["foo"], ">=3.6")
+    assert "foo" in result
+    assert "bar" not in result
+
+
 def test_union_markers_from_different_parents(resolve, repository):
     repository.add_candidate("foo", "0.1.0")
     repository.add_dependencies("foo", "0.1.0", ["bar; python_version < '3'"])
