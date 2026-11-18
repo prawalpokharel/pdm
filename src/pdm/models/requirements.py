@@ -228,7 +228,7 @@ class Requirement:
             return NamedRequirement(**kwargs)  # type: ignore[arg-type]
 
     def _format_marker(self) -> str:
-        if self.marker:
+        if self.marker and not self.marker.is_any():
             return f"; {self.marker!s}"
         return ""
 

@@ -83,6 +83,16 @@ def test_update_ignore_constraints(project, repository, pdm):
 
 
 @pytest.mark.usefixtures("working_set")
+def test_update_unconstrained_with_always_true_marker(project, pdm):
+    project.pyproject.metadata["dependencies"] = ["pytz; os_name == 'nt' or os_name != 'nt'"]
+    project.pyproject.write()
+
+    pdm(["update", "pytz", "--unconstrained"], obj=project, strict=True)
+    assert project.pyproject.metadata["dependencies"] == ["pytz>=2019.3"]
+    pdm(["lock", "--check"], obj=project, strict=True)
+
+
+@pytest.mark.usefixtures("working_set")
 @pytest.mark.parametrize("strategy", ["reuse", "all"])
 def test_update_all_packages(project, repository, pdm, strategy):
     pdm(["add", "requests", "pytz"], obj=project, strict=True)

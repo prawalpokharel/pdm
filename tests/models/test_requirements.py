@@ -69,6 +69,15 @@ REQUIREMENTS = [
         "foo>=3.0+g1234; python_version>='3.6'",
         'foo>=3.0; python_version >= "3.6"',
     ),
+    # A marker that is always true is not written
+    (
+        'requests>=2.20.0; os_name == "nt" or os_name != "nt"',
+        "requests>=2.20.0",
+    ),
+    (
+        'pip @ https://github.com/pypa/pip/archive/1.3.1.zip ; python_version >= "3.8" or python_version < "3.8"',
+        "pip @ https://github.com/pypa/pip/archive/1.3.1.zip",
+    ),
 ]
 
 

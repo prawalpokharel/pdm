@@ -288,6 +288,12 @@ def test_add_package_with_mismatch_marker(project, working_set, pdm):
     assert "pytz" not in working_set
 
 
+def test_add_package_with_always_true_marker(project, working_set, pdm):
+    pdm(["add", "pytz; os_name == 'nt' or os_name != 'nt'"], obj=project, strict=True)
+    assert project.pyproject.metadata["dependencies"] == ["pytz>=2019.3"]
+    assert "pytz" in working_set
+
+
 def test_add_dependency_from_multiple_parents(project, working_set, pdm):
     env = project.environment
     env.__dict__["spec"] = EnvSpec.from_spec("==3.11", "macos", "cpython")
